@@ -160,7 +160,7 @@ class TestReportFormat < Test::Unit::TestCase
   # --- document ---
 
   def test_should_use_absolute_ref
-    assert_no_match /[上下右左次(以下)]の[表図][^(\\ref{)]/, @pdf.document, 'should use absolute ref like "図1" or "表1"'
+    assert_no_match /[上下右左次(以下)]の[表図(リスト)][^(\\ref{)]/, @pdf.document, 'should use absolute ref like "図1" or "表1"'
   end
 
   # def test_should_not_use_ordinary_punctuation
