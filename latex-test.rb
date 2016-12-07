@@ -9,7 +9,7 @@ class LaTeX
   end
 
   def document
-    @document ||= @text.match(/\\begin{document}(.*?)\\end{document}/m)[1]
+    @document ||= @text.gsub!(/\\begin{verbatim}.*?\\end{verbatim}|\\begin{lstlisting}.*?\\end{lstlisting}|\\verb\*?[\|#].*?[\|#]/mx,"")
   end
 
   def labels(&block)
@@ -160,14 +160,14 @@ class TestReportFormat < Test::Unit::TestCase
   # --- document ---
 
   def test_should_use_absolute_ref
-    assert_no_match /[上下右左]の[表図]/, @pdf.document, 'should use absolute ref like "図1" or "表1"'
+    assert_no_match /[上下右左次(以下)]の[表図][^(\\ref{)]/, @pdf.document, 'should use absolute ref like "図1" or "表1"'
   end
 
-  def test_should_not_use_ordinary_punctuation
-    assert_no_match /[。、]/, @pdf.document, 'should use "．" and "，" as punctuation'
-  end
+  # def test_should_not_use_ordinary_punctuation
+  #   assert_no_match /[。、]/, @pdf.document, 'should use "．" and "，" as punctuation'
+  # end
 
   def test_should_not_use_desu_masu_dialect
-    assert_no_match /(?:です|ます)[。．]/, @pdf.document, 'should not use "です" or "ます" as end of sentences'
+    assert_no_match /(?:です|ます)[。．]|(?:です|ます)$/, @pdf.document, 'should not use "です" or "ます" as end of sentences'
   end
 end
