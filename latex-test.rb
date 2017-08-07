@@ -7,9 +7,10 @@ class LaTeX
     @text = File.read(filepath)
     @text.gsub!(/\%.*$/, "")
     @text.scan(/\\input{(.*?)}/).flatten.flatten.each do |i|
-      partial = File.read(i+'.tex').gsub!(/\%.*$/, "")
+      partial = File.read(i+'.tex')
       @text.gsub!(/\\input{#{i}}/, partial)
     end
+    @text.gsub!(/\%.*$/, "")
   end
 
   def document
