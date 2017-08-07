@@ -7,7 +7,7 @@ class LaTeX
     @text = File.read(filepath)
     @text.gsub!(/\%.*$/, "")
     @text.scan(/\\input{(.*?)}/).flatten.flatten.each do |i|
-      partial = File.read(i+'.tex')
+      partial = File.read(i+'.tex').gsub!(/\%.*$/, "")
       @text.gsub!(/\\input{#{i}}/, partial)
     end
   end
@@ -159,6 +159,7 @@ class TestReportFormat < Test::Unit::TestCase
     @pdf.equations do |eq|
       assert_match /.*?\\_.*?/, eq, 'inline equation which uses \\tt has no escaped underscore'
     end
+  end
 
   # --- listings ---
 
