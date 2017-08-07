@@ -6,10 +6,19 @@ class LaTeX
   def initialize(filepath)
     @text = File.read(filepath)
     @text.gsub!(/\%.*$/, "")
+    @text.scan(/\\input{(.*?)}/).flatten.flatten.each do |i|
+      partial = File.read(i+'.tex')
+      @text.gsub!(/\\input{#{i}}/, partial)
+    end
   end
 
   def document
     @document ||= @text.gsub!(/\\begin{verbatim}.*?\\end{verbatim}|\\begin{lstlisting}.*?\\end{lstlisting}|\\verb\*?[\|#].*?[\|#]/mx,"")
+  end
+
+  def inputs(&block)
+    @inputs ||= @text.scan(/\\input{(.*?)}/).flatten
+    @inputs.tap { |array| array.each(&block) if block_given? }
   end
 
   def labels(&block)
