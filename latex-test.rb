@@ -41,6 +41,11 @@ class LaTeX
     @tables.tap { |array| array.each(&block) if block_given? }
   end
 
+  def equations(&block)
+    @equations ||= @text.scan(/\$\\tt\s(.*?_.*?)\$/).flatten
+    @equations.tap { |array| array.each(&block) if block_given? }
+  end
+
   def listings(&block)
     @listings ||= @text.scan(%r{
       \\begin{lstlisting}.*?\[(.*?)\]
@@ -147,6 +152,13 @@ class TestReportFormat < Test::Unit::TestCase
       assert_match /center/, tab, '\\table must be centering'
     end
   end
+
+  # --- equations ---
+
+  def test_underscore_in_variable_name_should_escape
+    @pdf.equations do |eq|
+      assert_match /.*?\\_.*?/, eq, 'inline equation which uses \\tt has no escaped underscore'
+    end
 
   # --- listings ---
 
